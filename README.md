@@ -6,73 +6,118 @@
 [![XGBoost](https://img.shields.io/badge/XGBoost-%23139CFF.svg)](https://xgboost.ai/)
 [![SHAP](https://img.shields.io/badge/SHAP-Explainable%20AI-success.svg)](https://shap.readthedocs.io/en/latest/)
 
-> **Code accompanying the research paper on AI-Based Phishing Detection.** This repository implements Random Forest and XGBoost models on the Hannousse & Yahiouche dataset, utilizing SHAP (global) and LIME (local) to demystify and explain model predictions.
+> **Official Code Repository** accompanying the research paper: *"AI-Based Phishing Website Detection Using Explainable Machine Learning"*. 
+> This repository provides the complete implementation of the methodology, including data preprocessing, model training, evaluation, and the generation of explainability artifacts using SHAP and LIME.
 
 ---
 
 ## 📑 Table of Contents
-- [Overview](#-overview)
-- [Project Setup](#-project-setup)
-- [Data Requirements](#-data-requirements)
-- [Pipeline & Scripts](#-pipeline--scripts)
-- [Important Notes](#-important-notes)
+1. [Abstract & Methodology](#-abstract--methodology)
+2. [Repository Structure](#-repository-structure)
+3. [Environment Setup](#-environment-setup)
+4. [Datasets & Preparation](#-datasets--preparation)
+5. [Reproducing Results](#-reproducing-results)
+6. [Citation & Contact](#-citation--contact)
 
 ---
 
-## 🔍 Overview
-This project focuses on the intersection of cybersecurity and Explainable AI (XAI). We train state-of-the-art machine learning models (Random Forest and XGBoost) to detect phishing URLs and subsequently apply **SHAP** and **LIME** to ensure these models remain transparent and interpretable.
+## 📖 Abstract & Methodology
+
+As phishing attacks grow in sophistication, robust and **interpretable** detection mechanisms are essential. This research bridges the gap between high-accuracy machine learning and model transparency. 
+
+We train state-of-the-art predictive models (**Random Forest** and **XGBoost**) on comprehensive phishing URL datasets. To overcome the "black-box" nature of these algorithms, we apply **Explainable AI (XAI)** frameworks:
+- **SHAP (SHapley Additive exPlanations):** Used for *global interpretability* to rank the overall importance of URL and website features.
+- **LIME (Local Interpretable Model-agnostic Explanations):** Used for *local interpretability* to explain the decision-making process for individual instances, particularly analyzing misclassified cases.
 
 ---
 
-## ⚙️ Project Setup
+## 📂 Repository Structure
 
-Clone the repository and install the required dependencies:
+The scripts are highly modular and designed to be executed sequentially to reproduce the findings presented in the paper.
+
+| Script / File | Purpose & Output |
+| :--- | :--- |
+| `phishing_detection_full_pipeline.py` | **Main Pipeline:** Loads data, applies 5-fold grid search for RF and XGBoost, evaluates performance (Accuracy, F1, McNemar's test), and generates base SHAP/LIME figures. |
+| `01_full_shap_full_test_set.py` | **Global Interpretability:** Recomputes SHAP importance across the *complete 2,286-instance test set* using the trained models. |
+| `02_misclassified_case_analysis.py` | **Error Analysis:** Applies LIME on individually misclassified cases to isolate the exact feature values driving incorrect predictions. |
+| `03_lime_correct_and_misclassified_examples.py`| **Local Interpretability:** Regenerates precise 8-feature LIME explanations for illustrative cases highlighted in the paper's figures. |
+| `04_cross_dataset_check_phiusiil.py` | **Cross-Dataset Validation:** Trains a restricted 8-feature model on Hannousse data and evaluates its generalizability on a PhiUSIIL sample (Accuracy & SHAP ranking). |
+
+---
+
+## ⚙️ Environment Setup
+
+To guarantee reproducibility, we recommend running this codebase within a virtual environment. 
 
 ```bash
 # Clone the repository
 git clone https://github.com/uneebzulfiqar45-cpu/phishing-website-detection-xai.git
 cd phishing-website-detection-xai
 
+# Create and activate a virtual environment (optional but recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows use: venv\Scripts\activate
+
 # Install dependencies
 pip install -r requirements.txt
 ```
 
-*(Alternatively, you can install the packages directly: `pip install pandas numpy scikit-learn xgboost shap lime statsmodels joblib`)*
-
 ---
 
-## 📊 Data Requirements
+## 📊 Datasets & Preparation
 
-The models rely on the following datasets, which are not included in this repository due to size constraints. Please download them and place them in the project's root directory:
+Due to size constraints and licensing, the raw datasets are **not included** directly in this repository. To run the pipeline, please download the following datasets and place them in the root directory:
 
-1. **Hannousse & Yahiouche Phishing Website Dataset**  
-   - **File:** `dataset_B_05_2020.csv`  
+1. **Hannousse & Yahiouche Phishing Website Dataset** (Primary Dataset)
+   - **Filename:** `dataset_B_05_2020.csv`  
    - **Source:** [Mendeley Data (DOI: 10.17632/c2gw7fy2j4.3)](https://data.mendeley.com/datasets/c2gw7fy2j4/3)
-2. **PhiUSIIL Phishing URL Dataset** *(Only needed for Script 04)*  
-   - **File:** `PhiUSIIL_Phishing_URL_Dataset.csv`  
+
+2. **PhiUSIIL Phishing URL Dataset** (Used for Cross-Validation in Script 04)
+   - **Filename:** `PhiUSIIL_Phishing_URL_Dataset.csv`  
    - **Source:** [UCI Machine Learning Repository (Dataset ID: 967)](https://archive.ics.uci.edu/dataset/967/phiusiil+phishing+url+dataset)
 
 ---
 
-## 🚀 Pipeline & Scripts
+## 🚀 Reproducing Results
 
-The scripts are designed to be run sequentially. Each is self-contained provided the datasets are present.
+Execute the scripts in the following order. Each script is self-contained (provided the datasets and previous model artifacts exist).
 
-| Step | Script | Description |
-| :--- | :--- | :--- |
-| **01** | `phishing_detection_full_pipeline.py` | Loads and preprocesses data, trains RF & XGBoost (5-fold grid search), evaluates, runs McNemar's test, and generates initial SHAP/LIME figures. |
-| **02** | `01_full_shap_full_test_set.py` | Recomputes SHAP importance on the complete 2,286-instance test set. Requires `rf_model.pkl` and `xgb_model.pkl` generated in Step 1. |
-| **03** | `02_misclassified_case_analysis.py` | Runs LIME on individual misclassified instances, analyzing the actual feature values driving the incorrect predictions. |
-| **04** | `03_lime_correct_and_misclassified_examples.py` | Regenerates the 8-feature LIME explanations for illustrative correct and misclassified cases. |
-| **05** | `04_cross_dataset_check_phiusiil.py` | Performs a partial cross-dataset check. Trains a restricted 8-feature model on Hannousse data and evaluates it against a PhiUSIIL sample to compare accuracy and SHAP ranking. |
+```bash
+# 1. Run the primary training and evaluation pipeline
+python phishing_detection_full_pipeline.py
+
+# 2. Generate comprehensive SHAP analysis on the full test set
+python 01_full_shap_full_test_set.py
+
+# 3. Analyze misclassified edge cases
+python 02_misclassified_case_analysis.py
+
+# 4. Generate local LIME explanations for specific examples
+python 03_lime_correct_and_misclassified_examples.py
+
+# 5. Validate the model against an independent cross-dataset
+python 04_cross_dataset_check_phiusiil.py
+```
+
+### 📌 Important Reproducibility Notes
+- **Seed States:** All scripts utilize `random_state=42` to ensure consistent data splitting and model initialization.
+- **LIME Stability:** Because LIME's surrogate model uses random perturbation sampling, slight numerical shifts in feature weights may occur across different runs or environments, despite fixed seeds. This behavior is documented in the paper's limitations.
+- **Artifacts:** Trained `.pkl` model files are generated by the first script and utilized by subsequent scripts.
 
 ---
 
-## 💡 Important Notes
+## 📝 Citation & Contact
 
-- **Reproducibility:** All scripts utilize `random_state=42` throughout the codebase.
-- **LIME Stability:** LIME's local surrogate employs random perturbation sampling. Even with a fixed seed, slight shifts in weight values may occur across different environments or execution orders.
-- **Model Artifacts:** Pre-trained model files and specific train/test indices are excluded from the repository to save space. Running Script 1 from start to finish will regenerate them.
+If you utilize this code or methodology in your research, please consider citing our paper:
 
----
-*Created for robust and interpretable phishing website detection research.*
+```bibtex
+@article{zulfiqar2023phishingxai,
+  title={AI-Based Phishing Website Detection Using Explainable Machine Learning},
+  author={Zulfiqar, Uneeb and [Co-Authors]},
+  journal={[Journal/Conference Name]},
+  year={[Year]},
+  doi={[DOI if available]}
+}
+```
+
+*For questions, discussions, or issues related to the code, please open an issue in this repository.*
