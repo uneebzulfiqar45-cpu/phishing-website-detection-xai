@@ -1,7 +1,6 @@
 # 🛡️ AI-Based Phishing Website Detection Using Explainable Machine Learning (XAI)
 
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 [![XGBoost](https://img.shields.io/badge/XGBoost-%23139CFF.svg)](https://xgboost.ai/)
 [![SHAP](https://img.shields.io/badge/SHAP-Explainable%20AI-success.svg)](https://shap.readthedocs.io/en/latest/)
@@ -119,5 +118,11 @@ If you utilize this code or methodology in your research, please consider citing
   doi={[DOI if available]}
 }
 ```
+
+### ⚖️ Copyright & License
+
+**© 2026 Uneeb Zulfiqar. All Rights Reserved.**
+
+*This code is provided exclusively for the peer-review process of the associated research paper. It may not be copied, modified, distributed, or used in any other research or commercial projects without explicit written permission from the author until the paper is officially published and a formal open-source license is granted.*
 
 *For questions, discussions, or issues related to the code, please open an issue in this repository.*
