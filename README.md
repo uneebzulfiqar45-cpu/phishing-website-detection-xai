@@ -1,82 +1,141 @@
-# Phishing Website Detection — XAI Code Repository
+# 🛡️ Phishing Website Detection — XAI Codebase
 
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
-[![Scikit-Learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
-[![XGBoost](https://img.shields.io/badge/XGBoost-%23139CFF.svg)](https://xgboost.ai/)
-[![SHAP](https://img.shields.io/badge/SHAP-Explainable%20AI-success.svg)](https://shap.readthedocs.io/en/latest/)
-[![LIME](https://img.shields.io/badge/LIME-Local%20Explanations-orange.svg)](https://github.com/marcotcr/lime)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-Latest-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
+[![XGBoost](https://img.shields.io/badge/XGBoost-Latest-139CFF?style=for-the-badge)](https://xgboost.ai/)
+[![SHAP](https://img.shields.io/badge/SHAP-Explainability-00C851?style=for-the-badge)](https://shap.readthedocs.io/)
+[![LIME](https://img.shields.io/badge/LIME-Local%20Explanations-FF6B35?style=for-the-badge)](https://github.com/marcotcr/lime)
 
 ---
 
-## 📦 Requirements
+## 📋 Overview
 
-Install all dependencies using:
+This repository contains the complete codebase for training, evaluating, and interpreting machine learning models for phishing website detection. The pipeline covers end-to-end model development using **Random Forest** and **XGBoost**, with **SHAP** and **LIME** integrated for model explainability.
 
+---
+
+## 📁 Project Structure
+
+```
+📦 phishing-website-detection-xai/
+├── 📄 phishing_detection_full_pipeline.py       # Main training & evaluation pipeline
+├── 📄 01_full_shap_full_test_set.py             # SHAP analysis on full test set
+├── 📄 02_misclassified_case_analysis.py         # LIME on misclassified instances
+├── 📄 03_lime_correct_and_misclassified_examples.py  # LIME for selected examples
+├── 📄 04_cross_dataset_check_phiusiil.py        # Cross-dataset generalization check
+├── 📄 requirements.txt                          # Python dependencies
+└── 📄 README.md
+```
+
+---
+
+## ⚙️ Installation
+
+**Step 1 — Clone the repository:**
+```bash
+git clone https://github.com/uneebzulfiqar45-cpu/phishing-website-detection-xai.git
+cd phishing-website-detection-xai
+```
+
+**Step 2 — (Recommended) Create a virtual environment:**
+```bash
+python -m venv venv
+
+# Activate on Windows
+venv\Scripts\activate
+
+# Activate on macOS/Linux
+source venv/bin/activate
+```
+
+**Step 3 — Install dependencies:**
 ```bash
 pip install -r requirements.txt
 ```
 
-Or manually:
+---
 
+## 🗂️ Data Preparation
+
+Before running any script, place the following dataset files in the **project root directory**:
+
+| File | Required By |
+|:-----|:-----------|
+| `dataset_B_05_2020.csv` | Scripts 1 – 4 |
+| `PhiUSIIL_Phishing_URL_Dataset.csv` | Script 5 only |
+
+> ⚠️ **Note:** Dataset files are **not included** in this repository. Obtain them separately and place them in the root folder before running the pipeline.
+
+---
+
+## 🚀 Running the Pipeline
+
+Execute all scripts **in order**. Each script depends on the outputs of the previous one.
+
+### Step 1 — Train Models & Generate Base Outputs
 ```bash
-pip install pandas numpy scikit-learn xgboost shap lime statsmodels joblib
-```
-
-> **Python 3.8 or above** is required.
-
----
-
-## 📁 Scripts Overview
-
-Run scripts in the following order:
-
-| # | Script | What It Does |
-|:--|:-------|:-------------|
-| 1 | `phishing_detection_full_pipeline.py` | Main training script. Trains Random Forest & XGBoost with 5-fold cross-validated grid search. Outputs evaluation metrics and saves `rf_model.pkl` and `xgb_model.pkl`. |
-| 2 | `01_full_shap_full_test_set.py` | Loads saved models and runs SHAP analysis on the full test set. Requires `.pkl` files from Script 1. |
-| 3 | `02_misclassified_case_analysis.py` | Runs LIME on misclassified instances. Reports feature values alongside LIME weights. |
-| 4 | `03_lime_correct_and_misclassified_examples.py` | Generates 8-feature LIME explanations for selected correct and misclassified examples. |
-| 5 | `04_cross_dataset_check_phiusiil.py` | Trains a restricted 8-feature model and evaluates it on an external dataset sample. |
-
----
-
-## 🗂️ Data
-
-The scripts expect the following CSV files to be placed in the **root directory** of the project:
-
-- `dataset_B_05_2020.csv` — Used by Scripts 1–4
-- `PhiUSIIL_Phishing_URL_Dataset.csv` — Used by Script 5 only
-
-> ⚠️ Dataset files are **not included** in this repository. Please obtain them separately and place them in the project root before running any scripts.
-
----
-
-## ▶️ How to Run
-
-```bash
-# Step 1 — Train models and generate base outputs
 python phishing_detection_full_pipeline.py
+```
+> Trains Random Forest and XGBoost classifiers using 5-fold cross-validated grid search. Outputs evaluation metrics and saves `rf_model.pkl` and `xgb_model.pkl` to disk.
 
-# Step 2 — Full SHAP analysis on test set
+---
+
+### Step 2 — SHAP Analysis on Full Test Set
+```bash
 python 01_full_shap_full_test_set.py
+```
+> Loads the saved `.pkl` models and computes SHAP feature importance values across the complete 2,286-instance test set for both classifiers.
 
-# Step 3 — LIME on misclassified cases
+---
+
+### Step 3 — LIME on Misclassified Instances
+```bash
 python 02_misclassified_case_analysis.py
+```
+> Identifies misclassified instances and applies LIME to generate local explanations. Reports actual feature values alongside LIME contribution weights.
 
-# Step 4 — LIME explanations for selected examples
+---
+
+### Step 4 — LIME Explanations for Selected Examples
+```bash
 python 03_lime_correct_and_misclassified_examples.py
+```
+> Generates 8-feature LIME explanation plots for a curated set of correctly classified and misclassified instances.
 
-# Step 5 — Cross-dataset evaluation
+---
+
+### Step 5 — Cross-Dataset Generalization Check
+```bash
 python 04_cross_dataset_check_phiusiil.py
 ```
+> Trains a restricted 8-feature model and evaluates it, without any retraining, on an external dataset sample to assess cross-dataset generalizability.
 
 ---
 
-## 🔁 Reproducibility
+## 📌 Reproducibility Notes
 
-- All scripts use `random_state=42`.
-- LIME uses random perturbation sampling — minor numerical variation in weights may occur across environments even with a fixed seed.
-- Model files (`rf_model.pkl`, `xgb_model.pkl`) are produced by Script 1 and used by Scripts 2–4.
+| Setting | Value |
+|:--------|:------|
+| Global Random Seed | `random_state = 42` |
+| Model Artifacts | `rf_model.pkl`, `xgb_model.pkl` (generated by Script 1) |
+| LIME Stability | Minor numerical variation possible across environments |
+
+> LIME uses internal random perturbation sampling. Even with a fixed seed, slight differences in feature weight values may appear across different library versions or execution contexts. This is expected behaviour.
+
+---
+
+## 📦 Dependencies
+
+| Package | Purpose |
+|:--------|:--------|
+| `pandas` | Data manipulation |
+| `numpy` | Numerical computation |
+| `scikit-learn` | ML models & evaluation |
+| `xgboost` | Gradient boosting classifier |
+| `shap` | Global model explanations |
+| `lime` | Local model explanations |
+| `statsmodels` | McNemar's statistical test |
+| `joblib` | Model serialization |
 
 ---
 
@@ -84,4 +143,4 @@ python 04_cross_dataset_check_phiusiil.py
 
 **© 2026 Uneeb Zulfiqar. All Rights Reserved.**
 
-*This code is made available for review purposes only. Reproduction, redistribution, or reuse in any form without explicit written permission from the author is strictly prohibited.*
+This code is made available strictly for review purposes. No part of this codebase may be reproduced, redistributed, or reused in any form — including academic publications — without explicit written permission from the author.
